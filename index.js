@@ -6,7 +6,7 @@ var semver = require('semver');
 function checkVersions(json, callback) {
   if (!callback) {
     callback = json;
-    json = path.resolve(process.cwd(), 'package.json');
+    json = require(path.resolve(process.cwd(), 'package.json'));
   }
 
   var versions = json.engines;
