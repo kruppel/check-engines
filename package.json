@@ -6,7 +6,7 @@
   "main": "index.js",
   "bin": { "check-engines": "./bin/check-engines" },
   "scripts": {
-    "test": "node test.js"
+    "test": "mocha -r spec/setup.js spec/**/*_spec.js"
   },
   "license": "Apache-2.0",
   "repository": "http://github.com/kruppel/check-engines",

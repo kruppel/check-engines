@@ -3,7 +3,7 @@ var childProcess = require('child_process');
 var format = require('util').format;
 var semver = require('semver');
 
-function checkVersions(json, callback) {
+function checkEngines(json, callback) {
   if (!callback) {
     callback = json;
     json = require(path.resolve(process.cwd(), 'package.json'));
@@ -13,20 +13,23 @@ function checkVersions(json, callback) {
   var types = Object.keys(versions || {});
   var errors = [];
   var count = types.length;
+  var info = {};
   var type;
   var range;
   var cmd;
 
-  function done() {
+  function done(name, actual, expected) {
+    info[name] = [actual, expected];
+
     if (--count) {
       return;
     }
 
     if (errors.length > 0) {
-      return callback(new Error(errors.join('\n')));
+      return callback(new Error(errors.join('\n')), info);
     }
 
-    callback();
+    callback(null, info);
   }
 
   for (var i = 0, len = types.length; i < len; i++) {
@@ -48,9 +51,9 @@ function checkVersions(json, callback) {
         );
       }
 
-      done();
+      done(type, version, range);
     });
   }
 };
 
-module.exports = checkVersions;
+module.exports = checkEngines;
