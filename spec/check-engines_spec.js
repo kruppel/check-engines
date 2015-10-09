@@ -119,4 +119,32 @@ describe("check-engines", function() {
       });
     });
   });
+
+  describe("two engines in package.json", function() {
+    var spy;
+    var mockNodeChildProcess;
+
+    beforeEach(function() {
+      mockNodeChildProcess = {
+        stdout: new EventEmitter()
+      };
+      childProcess.spawn.withArgs('node', ['-v']).returns(mockNodeChildProcess);
+
+      spy = sinon.spy();
+      checkEngines(require('./package-double.json'), spy);
+      mockChildProcess.stdout.emit('data', '2.11.2\n');
+      mockNodeChildProcess.stdout.emit('data', '4.0.0\n');
+    });
+
+    it("reads package.json from cwd", function() {
+      expect(spy).to.have.been.calledWith(
+        null,
+        {
+        npm: ['2.11.2', '>=2.11.2'],
+        node: ['4.0.0', '>=4.0.0']
+        }
+      );
+    });
+  });
+
 });

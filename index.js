@@ -51,7 +51,9 @@ function checkEngines(json, callback) {
     range = versions[type];
     cmd = (type === 'node' || type === 'iojs') ? queryProcess : spawnProcess;
 
-    cmd(type, function(version) {
+    cmd.stdout.on('data', function(type, range, data) {
+      var version = data.toString().trim();
+
       if (!semver.satisfies(version, versions[type])) {
         errors.push(
           format(
@@ -64,7 +66,7 @@ function checkEngines(json, callback) {
       }
 
       done(type, version, range);
-    });
+    }.bind(null, type, range));
   }
 };
 
