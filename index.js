@@ -37,7 +37,7 @@ function checkEngines(json, callback) {
     range = versions[type];
     cmd = childProcess.spawn(type, ['-v']);
 
-    cmd.stdout.on('data', function(data) {
+    cmd.stdout.on('data', function(type, range, data) {
       var version = data.toString().trim();
 
       if (!semver.satisfies(version, versions[type])) {
@@ -52,7 +52,7 @@ function checkEngines(json, callback) {
       }
 
       done(type, version, range);
-    });
+    }.bind(null, type, range));
   }
 };
 
