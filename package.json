@@ -1,10 +1,12 @@
 {
   "name": "check-engines",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Verifies all engines satisfy version specification.",
   "author": "Kurt Ruppel <me@kurtruppel.com>",
   "main": "index.js",
-  "bin": { "check-engines": "./bin/check-engines" },
+  "bin": {
+    "check-engines": "./bin/check-engines"
+  },
   "scripts": {
     "test": "mocha -r spec/setup.js spec/**/*_spec.js"
   },
