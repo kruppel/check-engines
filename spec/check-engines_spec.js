@@ -48,6 +48,44 @@ describe("check-engines", function() {
     });
   });
 
+  describe("node", function () {
+    var version = process.version.substring(1);
+
+    describe("engine version", function () {
+      describe("less than package.json version", function () {
+        it("calls back with an error", function (done) {
+          var pkgJSON = {
+            "engines": {
+              "node": ">" + version
+            }
+          };
+
+          checkEngines(pkgJSON, function(err) {
+            expect(err.message).to.equal(
+              '[ERROR] node version (' + version + ') does not satisfy specified range (>' + version + ')'
+            );
+            done();
+          });
+        });
+      });
+
+      describe("greater than or equal to package.json version", function() {
+        it("does not call back with an error", function(done) {
+          var pkgJSON = {
+            "engines": {
+              "node": "<=" + version
+            }
+          };
+
+          checkEngines(pkgJSON, function(err) {
+            expect(err).to.be.null;
+            done();
+          });
+        });
+      });
+    });
+  });
+
   describe("npm", function() {
     describe("engine version", function() {
       var spy;

@@ -3,6 +3,20 @@ var childProcess = require('child_process');
 var format = require('util').format;
 var semver = require('semver');
 
+function queryProcess(type, callback) {
+  callback(process.version.substring(1));
+}
+
+function spawnProcess(type, callback) {
+  var cmd = childProcess.spawn(type, ['-v']);
+
+  cmd.stdout.on('data', function(data) {
+    var version = data.toString().trim();
+
+    callback(version);
+  });
+}
+
 function checkEngines(json, callback) {
   if (!callback) {
     callback = json;
@@ -35,11 +49,9 @@ function checkEngines(json, callback) {
   for (var i = 0, len = types.length; i < len; i++) {
     type = types[i];
     range = versions[type];
-    cmd = childProcess.spawn(type, ['-v']);
+    cmd = (type === 'node' || type === 'iojs') ? queryProcess : spawnProcess;
 
-    cmd.stdout.on('data', function(data) {
-      var version = data.toString().trim();
-
+    cmd(type, function(version) {
       if (!semver.satisfies(version, versions[type])) {
         errors.push(
           format(
