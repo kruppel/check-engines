@@ -7,6 +7,8 @@ describe("check-engines", function() {
   var mockChildProcess;
   var cwd;
 
+  var VERSION = process.version.substring(1);
+
   before(function() {
     cwd = process.cwd();
     process.chdir(__dirname);
@@ -49,20 +51,18 @@ describe("check-engines", function() {
   });
 
   describe("node", function () {
-    var version = process.version.substring(1);
-
     describe("engine version", function () {
       describe("less than package.json version", function () {
         it("calls back with an error", function (done) {
           var pkgJSON = {
             "engines": {
-              "node": ">" + version
+              "node": ">" + VERSION
             }
           };
 
           checkEngines(pkgJSON, function(err) {
             expect(err.message).to.equal(
-              '[ERROR] node version (' + version + ') does not satisfy specified range (>' + version + ')'
+              'Error: node version (' + VERSION + ') does not satisfy specified range (>' + VERSION + ')'
             );
             done();
           });
@@ -73,7 +73,7 @@ describe("check-engines", function() {
         it("does not call back with an error", function(done) {
           var pkgJSON = {
             "engines": {
-              "node": "<=" + version
+              "node": "<=" + VERSION
             }
           };
 
@@ -103,7 +103,7 @@ describe("check-engines", function() {
         it("calls back with an error", function() {
           expect(spy).to.have.been.calledWith(sinon.match.instanceOf(Error));
           expect(spy.args[0][0].message).to.equal(
-            '[ERROR] npm version (1.4.28) does not satisfy specified range (>=2.11.2)'
+            'Error: npm version (1.4.28) does not satisfy specified range (>=2.11.2)'
           );
         });
       });
@@ -121,19 +121,26 @@ describe("check-engines", function() {
   });
 
   describe("two engines in package.json", function() {
+    var desc;
     var spy;
-    var mockNodeChildProcess;
 
-    beforeEach(function() {
-      mockNodeChildProcess = {
-        stdout: new EventEmitter()
-      };
-      childProcess.spawn.withArgs('node', ['-v']).returns(mockNodeChildProcess);
+    beforeEach(function(done) {
+      desc = Object.getOwnPropertyDescriptor(process, 'version');
+      Object.defineProperty(process, 'version', {
+        value: 'v4.0.0'
+      });
 
       spy = sinon.spy();
-      checkEngines(require('./package-double.json'), spy);
+
+      checkEngines(require('./package-double.json'), function() {
+        spy.apply(null, arguments);
+        done();
+      });
       mockChildProcess.stdout.emit('data', '2.11.2\n');
-      mockNodeChildProcess.stdout.emit('data', '4.0.0\n');
+    });
+
+    afterEach(function() {
+      Object.defineProperty(process, 'version', desc);
     });
 
     it("reads package.json from cwd", function() {

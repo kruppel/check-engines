@@ -1,23 +1,7 @@
 var path = require('path');
-var childProcess = require('child_process');
-var format = require('util').format;
-var semver = require('semver');
+var EngineTest = require('./lib/engine-test');
 
-function queryProcess(type, callback) {
-  callback(process.version.substring(1));
-}
-
-function spawnProcess(type, callback) {
-  var cmd = childProcess.spawn(type, ['-v']);
-
-  cmd.stdout.on('data', function(data) {
-    var version = data.toString().trim();
-
-    callback(version);
-  });
-}
-
-function checkEngines(json, callback) {
+module.exports = function checkEngines(json, callback) {
   if (!callback) {
     callback = json;
     json = require(path.resolve(process.cwd(), 'package.json'));
@@ -29,11 +13,13 @@ function checkEngines(json, callback) {
   var count = types.length;
   var info = {};
   var type;
-  var range;
-  var cmd;
 
-  function done(name, actual, expected) {
-    info[name] = [actual, expected];
+  function done(err, constraints) {
+    info[constraints[0]] = [constraints[1], constraints[2]]
+
+    if (err) {
+      errors.push(err);
+    }
 
     if (--count) {
       return;
@@ -48,26 +34,7 @@ function checkEngines(json, callback) {
 
   for (var i = 0, len = types.length; i < len; i++) {
     type = types[i];
-    range = versions[type];
-    cmd = (type === 'node' || type === 'iojs') ? queryProcess : spawnProcess;
-
-    cmd.stdout.on('data', function(type, range, data) {
-      var version = data.toString().trim();
-
-      if (!semver.satisfies(version, versions[type])) {
-        errors.push(
-          format(
-            '[ERROR] %s version (%s) does not satisfy specified range (%s)',
-            type,
-            version,
-            range
-          )
-        );
-      }
-
-      done(type, version, range);
-    }.bind(null, type, range));
+    test = new EngineTest(type);
+    test.check(versions[type], done);
   }
 };
-
-module.exports = checkEngines;
