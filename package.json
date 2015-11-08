@@ -13,10 +13,10 @@
   "license": "Apache-2.0",
   "repository": "http://github.com/kruppel/check-engines",
   "dependencies": {
-    "semver": "^4.3.6"
+    "semver": ">=4.3.6"
   },
   "devDependencies": {
-    "chai": "^3.0.0",
+    "chai": "^3.4.1",
     "mocha": "^2.2.5",
     "sinon": "^1.15.3",
     "sinon-chai": "^2.8.0"
