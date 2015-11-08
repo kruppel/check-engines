@@ -15,7 +15,7 @@ module.exports = function checkEngines(json, callback) {
   var type;
 
   function done(err, constraints) {
-    info[constraints[0]] = [constraints[1], constraints[2]]
+    info[constraints[0]] = [constraints[1], constraints[2]];
 
     if (err) {
       errors.push(err);
