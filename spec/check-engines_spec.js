@@ -32,15 +32,22 @@ describe('check-engines', function() {
   });
 
   describe('without json argument', function() {
+    var cwd;
     var spy;
 
     beforeEach(function(done) {
       spy = sinon.spy();
+      cwd = process.cwd();
+      process.chdir('fixtures');
       checkEngines(function() {
         spy.apply(this, arguments);
         done();
       });
       mockChildProcess.stdout.emit('data', '2.11.2\n');
+    });
+
+    afterEach(function() {
+      process.chdir(cwd);
     });
 
     it('reads package.json from cwd', function() {
@@ -98,7 +105,7 @@ describe('check-engines', function() {
 
   describe('npm', function() {
     describe('engine version', function() {
-      var json = require('./package.json');
+      var json = require('./fixtures/package.json');
       var spy;
 
       beforeEach(function() {
@@ -140,6 +147,7 @@ describe('check-engines', function() {
   });
 
   describe('multiple engines', function() {
+    var json = require('./fixtures/multiple-engines.json');
     var descriptor;
     var spy;
 
@@ -151,7 +159,7 @@ describe('check-engines', function() {
 
       spy = sinon.spy();
 
-      checkEngines(require('./package-double.json'), function() {
+      checkEngines(json, function() {
         spy.apply(null, arguments);
         done();
       });
