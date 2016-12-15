@@ -48,6 +48,7 @@ describe('check-engines', function() {
         done();
       });
       mockChildProcess.stdout.emit('data', '2.11.2\n');
+      mockChildProcess.emit('close');
     });
 
     afterEach(function() {
@@ -123,6 +124,7 @@ describe('check-engines', function() {
             done();
           });
           mockChildProcess.stdout.emit('data', '1.4.28\n');
+          mockChildProcess.emit('close');
         });
 
         it('calls back with an error', function() {
@@ -141,6 +143,7 @@ describe('check-engines', function() {
             done();
           });
           mockChildProcess.stdout.emit('data', '2.11.2\n');
+          mockChildProcess.emit('close');
         });
 
         it('does not call back with an error', function() {
@@ -168,6 +171,7 @@ describe('check-engines', function() {
         done();
       });
       mockChildProcess.stdout.emit('data', '2.11.2\n');
+      mockChildProcess.emit('close');
     });
 
     afterEach(function() {
@@ -193,6 +197,7 @@ describe('check-engines', function() {
       process.nextTick(function() {
         badCommandMock.emit('error', new Error('unable to execute command'));
         mockChildProcess.stdout.emit('data', '2.11.2\n');
+        mockChildProcess.emit('close');
       });
     });
 
