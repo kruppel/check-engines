@@ -9,6 +9,12 @@ describe('check-engines', function() {
   var mockChildProcess;
   var cwd;
 
+  function createMockChildProcess() {
+    var process = new EventEmitter();
+    process.stdout = new EventEmitter();
+    return process;
+  }
+
   before(function() {
     cwd = process.cwd();
     process.chdir(__dirname);
@@ -19,9 +25,7 @@ describe('check-engines', function() {
   });
 
   beforeEach(function() {
-    mockChildProcess = {
-      stdout: new EventEmitter()
-    };
+    mockChildProcess = createMockChildProcess();
     sinon.stub(childProcess, 'spawn');
     childProcess.spawn.withArgs('npm', ['-v']).returns(mockChildProcess);
   });
@@ -174,6 +178,30 @@ describe('check-engines', function() {
       expect(spy).to.have.been.calledWith(null, {
         npm: ['2.11.2', '>=2.11.2'],
         node: ['4.0.0', '>=4.0.0']
+      });
+    });
+  });
+
+  describe('invalid engines', function() {
+    var json = require('./fixtures/invalid-engines.json');
+    var badCommandMock;
+    beforeEach(function() {
+      badCommandMock = createMockChildProcess();
+      childProcess.spawn.withArgs(
+        'this-is-not-an-executable', ['-v']
+      ).returns(badCommandMock);
+    });
+
+    it('handles invalid ranges and engines', function(done) {
+      setTimeout(function() {
+        badCommandMock.emit('error', new Error('unable to execute command'));
+      }, 0);
+      checkEngines(json, function(error) {
+        expect(error).not.to.equal(null);
+        expect(error.message).to.contain(
+          'this-is-not-an-executable version (undefined)'
+        );
+        done();
       });
     });
   });
