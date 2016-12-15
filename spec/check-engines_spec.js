@@ -190,16 +190,20 @@ describe('check-engines', function() {
       childProcess.spawn.withArgs(
         'this-is-not-an-executable', ['-v']
       ).returns(badCommandMock);
+      process.nextTick(function() {
+        badCommandMock.emit('error', new Error('unable to execute command'));
+        mockChildProcess.stdout.emit('data', '2.11.2\n');
+      });
     });
 
     it('handles invalid ranges and engines', function(done) {
-      setTimeout(function() {
-        badCommandMock.emit('error', new Error('unable to execute command'));
-      }, 0);
       checkEngines(json, function(error) {
         expect(error).not.to.equal(null);
         expect(error.message).to.contain(
-          'this-is-not-an-executable version (undefined)'
+          'Unable to determine version for (this-is-not-an-executable)'
+        );
+        expect(error.message).to.contain(
+          'does not satisfy specified range (not a valid range)'
         );
         done();
       });

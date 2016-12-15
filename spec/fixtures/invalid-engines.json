@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Test package.json for check-engines",
   "engines": {
+    "npm": "not a valid range",
     "this-is-not-an-executable": ">=4.0.0"
   }
 }
