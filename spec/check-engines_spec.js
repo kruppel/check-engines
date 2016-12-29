@@ -11,7 +11,9 @@ describe('check-engines', function() {
 
   function createMockChildProcess() {
     var process = new EventEmitter();
+
     process.stdout = new EventEmitter();
+
     return process;
   }
 
@@ -189,6 +191,7 @@ describe('check-engines', function() {
   describe('invalid engines', function() {
     var json = require('./fixtures/invalid-engines.json');
     var badCommandMock;
+
     beforeEach(function() {
       badCommandMock = createMockChildProcess();
       childProcess.spawn.withArgs(
