@@ -201,12 +201,19 @@ describe('check-engines', function() {
       });
     });
 
-    it('handles invalid ranges and engines', function(done) {
+    it('handles invalid engines', function(done) {
       checkEngines(json, function(error) {
         expect(error).not.to.equal(null);
         expect(error.message).to.contain(
           'Unable to determine version for (this-is-not-an-executable)'
         );
+        done();
+      });
+    });
+
+    it('handles invalid ranges', function(done) {
+      checkEngines(json, function(error) {
+        expect(error).not.to.equal(null);
         expect(error.message).to.contain(
           'does not satisfy specified range (not a valid range)'
         );
