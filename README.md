@@ -1,6 +1,6 @@
 # check-engines [![Build Status](https://secure.travis-ci.org/kruppel/check-engines.svg?branch=master)](https://travis-ci.org/kruppel/check-engines)
 
-Utility to verify that engine versions (node, npm, iojs) satisfy semver
+Utility to verify that engine versions (node, npm, iojs, yarn) satisfy semver
 constraints specified in package.json.
 
 ## Usage
