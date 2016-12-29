@@ -1,5 +1,6 @@
 var childProcess = require('child_process');
 var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 var sinon = require('sinon');
 var checkEngines = require('./../');
 
@@ -9,13 +10,11 @@ describe('check-engines', function() {
   var mockChildProcess;
   var cwd;
 
-  function createMockChildProcess() {
-    var process = new EventEmitter();
-
-    process.stdout = new EventEmitter();
-
-    return process;
+  function MockChildProcess() {
+    this.stdout = new EventEmitter();
   }
+
+  util.inherits(MockChildProcess, EventEmitter);
 
   before(function() {
     cwd = process.cwd();
@@ -27,7 +26,7 @@ describe('check-engines', function() {
   });
 
   beforeEach(function() {
-    mockChildProcess = createMockChildProcess();
+    mockChildProcess = new MockChildProcess();
     sinon.stub(childProcess, 'spawn');
     childProcess.spawn.withArgs('npm', ['-v']).returns(mockChildProcess);
   });
@@ -190,15 +189,19 @@ describe('check-engines', function() {
 
   describe('invalid engines', function() {
     var json = require('./fixtures/invalid-engines.json');
-    var badCommandMock;
 
     beforeEach(function() {
-      badCommandMock = createMockChildProcess();
+      var invalidCommandMock = new MockChildProcess();
+
       childProcess.spawn.withArgs(
         'this-is-not-an-executable', ['-v']
-      ).returns(badCommandMock);
+      ).returns(invalidCommandMock);
+
       process.nextTick(function() {
-        badCommandMock.emit('error', new Error('unable to execute command'));
+        invalidCommandMock.emit(
+          'error',
+          new Error('unable to execute command')
+        );
         mockChildProcess.stdout.emit('data', '2.11.2\n');
         mockChildProcess.emit('close');
       });
@@ -206,20 +209,20 @@ describe('check-engines', function() {
 
     it('handles invalid engines', function(done) {
       checkEngines(json, function(error) {
-        expect(error).not.to.equal(null);
         expect(error.message).to.contain(
           'Unable to determine version for (this-is-not-an-executable)'
         );
+
         done();
       });
     });
 
     it('handles invalid ranges', function(done) {
       checkEngines(json, function(error) {
-        expect(error).not.to.equal(null);
         expect(error.message).to.contain(
           'does not satisfy specified range (not a valid range)'
         );
+
         done();
       });
     });
