@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "eslint": "^1.9.0",
-    "mocha": "^2.2.5",
+    "eslint": "^3.12.2",
+    "mocha": "^3.2.0",
     "sinon": "^1.15.3",
     "sinon-chai": "^2.8.0"
   }
