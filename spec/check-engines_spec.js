@@ -227,4 +227,33 @@ describe('check-engines', function() {
       });
     });
   });
+
+  describe('yarn engine support', function() {
+    var json = require('./fixtures/yarn-engine.json');
+    var spy;
+
+    beforeEach(function(done) {
+      var yarnCommandMock = new MockChildProcess();
+
+      childProcess.spawn.withArgs(
+        'yarn', ['--version']
+      ).returns(yarnCommandMock);
+
+      spy = sinon.spy();
+
+      checkEngines(json, function() {
+        spy.apply(null, arguments);
+        done();
+      });
+
+      yarnCommandMock.stdout.emit('data', '2.11.2\n');
+      yarnCommandMock.emit('close');
+    });
+
+    it('handles yarn engine', function() {
+      expect(spy).to.have.been.calledWith(null, {
+        yarn: ['2.11.2', '>=2.10']
+      });
+    });
+  });
 });
