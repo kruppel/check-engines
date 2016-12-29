@@ -1,6 +1,6 @@
 {
   "name": "check-engines",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Verifies all engines satisfy version specification.",
   "author": "Kurt Ruppel <me@kurtruppel.com>",
   "main": "index.js",
