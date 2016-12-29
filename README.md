@@ -15,9 +15,9 @@ constraints specified in package.json.
 ### Programmatic
 
 ```javascript
-var checkEngines = require('check-engines');
+const checkEngines = require('check-engines');
 
-checkEngines(function(err) {
+checkEngines(err => {
   if (err) {
     console.error(err);
   }
