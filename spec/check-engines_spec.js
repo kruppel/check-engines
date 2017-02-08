@@ -28,7 +28,8 @@ describe('check-engines', function() {
   beforeEach(function() {
     mockChildProcess = new MockChildProcess();
     sinon.stub(crossSpawn, 'spawn');
-    crossSpawn.spawn.withArgs('npm', ['-v']).returns(mockChildProcess);
+    crossSpawn.spawn.withArgs('npm', ['-v'], {shell: true})
+      .returns(mockChildProcess);
   });
 
   afterEach(function() {
