@@ -14,6 +14,7 @@
   "license": "Apache-2.0",
   "repository": "http://github.com/kruppel/check-engines",
   "dependencies": {
+    "cross-spawn": "^5.0.1",
     "semver": ">=4.3.6"
   },
   "devDependencies": {

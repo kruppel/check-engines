@@ -1,4 +1,4 @@
-var childProcess = require('child_process');
+var crossSpawn = require('cross-spawn');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var sinon = require('sinon');
@@ -27,13 +27,14 @@ describe('check-engines', function() {
 
   beforeEach(function() {
     mockChildProcess = new MockChildProcess();
-    sinon.stub(childProcess, 'spawn');
-    childProcess.spawn.withArgs('npm', ['-v']).returns(mockChildProcess);
+    sinon.stub(crossSpawn, 'spawn');
+    crossSpawn.spawn.withArgs('npm', ['-v'], {shell: true})
+      .returns(mockChildProcess);
   });
 
   afterEach(function() {
     mockChildProcess.stdout.removeAllListeners();
-    childProcess.spawn.restore();
+    crossSpawn.spawn.restore();
   });
 
   describe('without json argument', function() {
@@ -193,7 +194,7 @@ describe('check-engines', function() {
     beforeEach(function() {
       var invalidCommandMock = new MockChildProcess();
 
-      childProcess.spawn.withArgs(
+      crossSpawn.spawn.withArgs(
         'this-is-not-an-executable', ['-v']
       ).returns(invalidCommandMock);
 
@@ -235,7 +236,7 @@ describe('check-engines', function() {
     beforeEach(function(done) {
       var yarnCommandMock = new MockChildProcess();
 
-      childProcess.spawn.withArgs(
+      crossSpawn.spawn.withArgs(
         'yarn', ['--version']
       ).returns(yarnCommandMock);
 
