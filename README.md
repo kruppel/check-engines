@@ -26,7 +26,7 @@ checkEngines(err => {
 
 ## License
 
-Copyright 2015-2017 Kurt Ruppel and contributors
+Copyright 2015-2022 Kurt Ruppel and contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License.
