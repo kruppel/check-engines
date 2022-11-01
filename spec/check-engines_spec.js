@@ -28,7 +28,7 @@ describe('check-engines', function() {
   beforeEach(function() {
     mockChildProcess = new MockChildProcess();
     sinon.stub(crossSpawn, 'spawn');
-    crossSpawn.spawn.withArgs('npm', ['-v'], {shell: true})
+    crossSpawn.spawn.withArgs('npm', ['--version'], {shell: true})
       .returns(mockChildProcess);
   });
 
@@ -195,7 +195,7 @@ describe('check-engines', function() {
       var invalidCommandMock = new MockChildProcess();
 
       crossSpawn.spawn.withArgs(
-        'this-is-not-an-executable', ['-v']
+        'this-is-not-an-executable', ['--version']
       ).returns(invalidCommandMock);
 
       process.nextTick(function() {
